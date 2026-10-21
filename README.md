@@ -196,7 +196,7 @@ wildfire/
 │   ├── 04_validation.ipynb
 │   ├── 05_analysis.ipynb
 │   └── exploratory/        # earlier iterations, fuel/pre-drop/DEM experiments, 2020-2021 validation
-├── outputs/                # failed_predictions.csv / .geojson
+├── outputs/                # failed_predictions.csv / .geojson (not tracked in git)
 ├── models/                 # trained models (not tracked in git)
 ├── data/                   # raw / interim / features (not tracked in git)
 └── docs/                   # data dictionary, methodology, figures/

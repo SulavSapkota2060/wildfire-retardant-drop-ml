@@ -118,6 +118,8 @@ Inputs: `wind_from_direction` (the direction the wind comes from) from `data/raw
 
 ## Outputs
 
+Generated locally and not tracked in git (`outputs/`, `models/` and `data/` are in `.gitignore`).
+
 | File | Description |
 |---|---|
 | `outputs/failed_predictions.csv` | 317 misclassified rows from `notebooks/exploratory/03_modeling.ipynb` (the DOB + split model), with columns `event_id, drop_id, buff_id, pt, predicted, mean_dob, split_burned_pixels, split_unburned_pixels, unburned_pixels, burned_pixels`. |
