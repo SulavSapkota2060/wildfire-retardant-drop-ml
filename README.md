@@ -103,28 +103,9 @@ A distance transform (`scipy.ndimage.distance_transform_edt`) of the burned mask
 ### 5. Paired-difference features
 A feature is also expressed relative to the drop's two sides: `feature - mean(feature over the two sides)`. Comparing the sides matters more than absolute values, and the paired difference is self-normalizing across drops of very different sizes. It is built for the unburned, early and burned counts at the local, split and expanded scales, and for the distance feature.
 
-### 6. Wind features
-Fire spread direction is heavily wind-driven, so `extract_wind_features(pair)` (Notebook 2, Part 4) describes each side of a drop relative to the wind.
 
-1. Build the drop line and the two split halves exactly as in the raster split, each clipped to the same 25%-of-diagonal circle.
-2. Take the line's unit direction and rotate it 90° to get a normal. Orient it toward side 1; side 2 gets the opposite normal.
-3. Convert the drop-line center from EPSG:5070 to lon/lat and read the wind direction (`wind_from_direction`) and speed (`wind_speed`, m/s) from the nearest grid cell on the drop date.
-4. The data gives the direction the wind blows **from** (θ). The direction it blows **toward** is `(-sin θ, -cos θ)` in (east, north).
-5. For each side, take the dot product of the wind-toward vector and the side's normal:
 
-| Feature | Definition |
-|---|---|
-| `wind_align` | Dot product: `+1` = the side is straight downwind of the line; `-1` = straight upwind; `0` = wind parallel to the line. The two sides always get opposite values. |
-| `wind_align_spd` | `wind_align x wind_speed` |
-| `wind_speed` | Wind speed on the drop date (the same for both sides) |
 
-The function returns `None` for a drop when the line is invalid, the split isn't exactly two halves, the date is outside the wind data, or the wind values are NaN. `plot_wind_drop(pair)` plots the raster, both regions, the normals and the wind vector for one drop.
-
-![Wind alignment example](docs/figures/wind_drop_example.png)
-
-*Example drop. Left: the fire's day-of-burning raster, the extended drop line (dotted) and the local region (shaded). Right: zoom on the drop, showing the normal for each side and the wind vector. Here the wind blows toward side 1 (`wind_align = +0.89`) and away from side 2 (`-0.89`).*
-
-The wind features are not part of the 30-feature final model and are not written to any `training_features_*.csv`.
 
 ---
 
@@ -223,10 +204,6 @@ The input data is not included in this repository. To reproduce the results or d
 - Not every row gets every feature. 20,582 of 21,081 rows have split features; the split extraction skipped 162 rows and the expanded extraction skipped 164, and the cause of each skip isn't tracked.
 - DEM terrain features are unfinished because of USGS download issues. Fuel, pre-drop, MTBS and fire-start-angle features were explored in `exploratory/` but are not in the final model.
 
-**Wind features**
-- Wind is read once, at the drop-line center, from the nearest grid cell, for the drop date only.
-- Wind direction files exist only for 2017-2019.
-- The wind features are not used in the final model and are not saved to the feature CSVs, so their predictive value is untested.
 
 **Evaluation**
 - Only accuracy is reported (no precision, recall, F1, ROC or confusion matrix).

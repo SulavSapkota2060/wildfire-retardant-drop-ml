@@ -49,36 +49,12 @@ For each key count, `x_pair_diff = x - mean(x over the two sides of the drop)`. 
 
 Random Forest with local features only: raw about 68.4%, paired-difference only about 80.0%, both 81.1%.
 
-## 6. Wind features
 
-Fire spread direction is heavily wind-driven. `extract_wind_features` (Notebook 2, Part 4) describes each side of a drop relative to the wind.
 
-### Geometry
-1. Build the drop line, the two split halves and the 25%-of-diagonal circle as in sections 3-4.
-2. Unit direction of the extended line: `d = (end - start) / |end - start|`. Normal: `n1 = (-d_y, d_x)`.
-3. `to_side1` is the vector from the drop-line center to the centroid of side 1's clipped region. If `n1 . to_side1 < 0`, flip `n1`. The normals are `{1: n1, 2: -n1}`.
 
-### Wind
-1. The drop-line center is converted from EPSG:5070 to lon/lat (`rasterio.warp.transform`).
-2. `sample_grid` finds the nearest grid cell (`argmin` of the absolute lat and lon differences) and the index of the drop date in the grid's `day` coordinate.
-3. `th` is `wind_from_direction` in degrees (the direction the wind comes **from**, clockwise from north), converted to radians. `speed` is `wind_speed` in m/s.
-4. The wind blows **toward** `(-sin th, -cos th)` in (east, north).
-5. `wind_align = wind_to . normal_of_side`, `wind_align_spd = wind_align * speed`, `wind_speed = speed`.
 
-### When the function returns `None`
-- The line geometry is invalid or the split isn't exactly two halves.
-- Either clipped region is empty.
-- The lon/lat transform fails or returns a non-finite value.
-- The date is not in the wind data (a `KeyError`, `IndexError` or `ValueError` is caught).
-- The sampled direction or speed is NaN.
 
-### Visual check
-`plot_wind_drop(pair)` plots the DOB raster, both side regions, each side's normal labeled with `wind_align`, and the wind vector labeled with direction and speed.
-
-### Status
-The wind features are not in the 30-feature final model and are not saved to a feature CSV. The wind direction files cover 2017-2019.
-
-## 7. Modeling setup
+## 6. Modeling setup
 
 | Step | Detail |
 |---|---|
